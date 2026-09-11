@@ -516,23 +516,33 @@ st.warning(
 )
 
 
-# ============================================================
 # SIDEBAR
 # ============================================================
+
+# Read Gemini API key securely from Streamlit Secrets
+try:
+    secret_api_key = st.secrets["GEMINI_API_KEY"]
+except Exception:
+    secret_api_key = ""
 
 with st.sidebar:
 
     st.header("⚙️ Settings")
 
     enable_ai = st.checkbox(
-        "Enable Gemini AI"
+        "Enable Gemini AI",
+        value=bool(secret_api_key)
     )
 
-    api_key = st.text_input(
-        "Gemini API Key",
-        type="password",
-        disabled=not enable_ai
-    )
+    if secret_api_key:
+        api_key = secret_api_key
+        st.success("Gemini API configured securely.")
+    else:
+        api_key = st.text_input(
+            "Gemini API Key",
+            type="password",
+            disabled=not enable_ai
+        )
 
     model_name = st.text_input(
         "Gemini model",
